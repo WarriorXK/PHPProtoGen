@@ -1,0 +1,26 @@
+{
+    "name": "warriorxk/phpprotogen",
+    "description": "ProtoBuf file generation for PHP",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["protobuf", "proto"],
+    "authors": [
+        {
+            "name": "Kevin Meijer",
+            "email": "admin@kevinmeijer.nl"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "WarriorXK\\PHPProtoBuf\\": "src/WarriorXK/PHPProtoBuf/"
+        }
+    },
+    "archive": {
+        "exclude": ["/Resources", "/Tests"]
+    },
+    "non-feature-branches": [
+        "develop",
+        "master"
+    ]
+}
