@@ -13,7 +13,7 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "WarriorXK\\PHPProtoBuf\\": "src/WarriorXK/PHPProtoBuf/"
+            "WarriorXK\\PHPProtoGen\\": "src/WarriorXK/PHPProtoGen/"
         }
     },
     "archive": {
