@@ -3,7 +3,7 @@
     "description": "ProtoBuf file generation for PHP",
     "type": "library",
     "license": "MIT",
-    "keywords": ["protobuf", "proto"],
+    "keywords": ["protobuf", "proto", "generate"],
     "authors": [
         {
             "name": "Kevin Meijer",

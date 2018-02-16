@@ -49,7 +49,7 @@ class Message {
     }
 
     /**
-     * @return null|\WarriorXK\PHPProtoGen\File
+     * @return \WarriorXK\PHPProtoGen\File|null
      */
     public function getFile() {
         return $this->_file;

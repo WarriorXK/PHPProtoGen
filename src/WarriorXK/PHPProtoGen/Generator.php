@@ -12,6 +12,11 @@ namespace WarriorXK\PHPProtoGen;
 class Generator {
 
     /**
+     * @var \WarriorXK\PHPProtoGen\ITagGenerator
+     */
+    protected $_tagGenerator = NULL;
+
+    /**
      * The root file is the file from which we include the others
      *
      * @var \WarriorXK\PHPProtoGen\File
@@ -22,6 +27,18 @@ class Generator {
      * @var \WarriorXK\PHPProtoGen\File[]
      */
     protected $_files = [];
+
+    public function __construct(ITagGenerator $tagGenerator) {
+        $this->setTagGenerator($tagGenerator);
+    }
+
+    public function setTagGenerator(ITagGenerator $tagGenerator) {
+        $this->_tagGenerator = $tagGenerator;
+    }
+
+    public function getTagGenerator() : ITagGenerator {
+        return $this->_tagGenerator;
+    }
 
     /**
      * @param \WarriorXK\PHPProtoGen\File $file
@@ -56,7 +73,7 @@ class Generator {
     }
 
     public function getTagForField(Field $field) : int {
-        return 1; // Todo
+        return $this->_tagGenerator->getTagForField($field);
     }
 
     public function exportToDir(string $dir) {
