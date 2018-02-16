@@ -6,6 +6,8 @@
  * Time: 19:57
  */
 
+declare(strict_types = 1);
+
 namespace WarriorXK\PHPProtoGen;
 
 class Import {

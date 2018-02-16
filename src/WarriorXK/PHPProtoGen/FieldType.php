@@ -6,6 +6,8 @@
  * Time: 16:33
  */
 
+declare(strict_types = 1);
+
 namespace WarriorXK\PHPProtoGen;
 
 class FieldType {
