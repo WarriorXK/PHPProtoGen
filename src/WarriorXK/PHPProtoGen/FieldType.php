@@ -5,7 +5,6 @@
  * Date: 15/02/2018
  * Time: 16:33
  */
-
 declare(strict_types = 1);
 
 namespace WarriorXK\PHPProtoGen;
@@ -85,5 +84,4 @@ class FieldType {
     public function exportToString() : string {
         return ($this->isRepeatable() ? 'repeated ' : '') . $this->getType();
     }
-
 }
