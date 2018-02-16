@@ -5,7 +5,6 @@
  * Date: 15/02/2018
  * Time: 15:18
  */
-
 declare(strict_types = 1);
 
 namespace WarriorXK\PHPProtoGen;
@@ -143,7 +142,7 @@ class Message {
 
         $in = '    ';
 
-        $str  = 'message ' . $this->getName() . ' {' . PHP_EOL;
+        $str = 'message ' . $this->getName() . ' {' . PHP_EOL;
 
         $reservedStr = $this->_reservedTagsStr();
 
@@ -157,5 +156,4 @@ class Message {
 
         return $str . '}';
     }
-
 }

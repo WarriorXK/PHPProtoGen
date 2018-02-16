@@ -5,7 +5,6 @@
  * Date: 15/02/2018
  * Time: 19:57
  */
-
 declare(strict_types = 1);
 
 namespace WarriorXK\PHPProtoGen;
@@ -53,5 +52,4 @@ class Import {
     public function exportToString() : string {
         return 'import ' . ($this->isPublic() ? 'public ' : '') . $this->getPath();
     }
-
 }

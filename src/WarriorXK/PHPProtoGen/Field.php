@@ -5,7 +5,6 @@
  * Date: 15/02/2018
  * Time: 15:21
  */
-
 declare(strict_types = 1);
 
 namespace WarriorXK\PHPProtoGen;
@@ -145,5 +144,4 @@ class Field {
 
         return $str . (empty($options) ? '' : ' [' . implode(', ', $options) . ']') . ';';
     }
-
 }

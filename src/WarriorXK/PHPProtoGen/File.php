@@ -5,7 +5,6 @@
  * Date: 15/02/2018
  * Time: 14:44
  */
-
 declare(strict_types = 1);
 
 namespace WarriorXK\PHPProtoGen;
@@ -86,7 +85,6 @@ class File {
     public function addImport(Import $import) : bool {
 
         /** @var \WarriorXK\PHPProtoGen\Import|null $localImport */
-
         $importPath = $import->getPath();
         $localImport = $this->_imports[$importPath] ?? NULL;
         if ($localImport === NULL || ($import->isPublic() && !$localImport->isPublic())) {
@@ -176,5 +174,4 @@ class File {
 
         return PHP_EOL . implode(PHP_EOL, $topLines) . PHP_EOL . PHP_EOL . implode(PHP_EOL . PHP_EOL, $strMessages) . PHP_EOL;
     }
-
 }

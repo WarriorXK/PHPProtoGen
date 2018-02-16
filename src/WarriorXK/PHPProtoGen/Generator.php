@@ -5,7 +5,6 @@
  * Date: 15/02/2018
  * Time: 14:41
  */
-
 declare(strict_types = 1);
 
 namespace WarriorXK\PHPProtoGen;
@@ -27,6 +26,7 @@ class Generator {
     /**
      * @param \WarriorXK\PHPProtoGen\File $file
      * @param bool                        $setAsRoot
+     *
      * @throws \LogicException
      */
     public function addFile(File $file, bool $setAsRoot = FALSE) {
@@ -73,5 +73,4 @@ class Generator {
         }
 
     }
-
 }
