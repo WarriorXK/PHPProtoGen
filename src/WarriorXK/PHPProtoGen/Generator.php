@@ -12,7 +12,7 @@ namespace WarriorXK\PHPProtoGen;
 class Generator {
 
     /**
-     * @var \WarriorXK\PHPProtoGen\ITagGenerator
+     * @var \WarriorXK\PHPProtoGen\ITagGenerator|null
      */
     protected $_tagGenerator = NULL;
 
@@ -28,15 +28,21 @@ class Generator {
      */
     protected $_files = [];
 
-    public function __construct(ITagGenerator $tagGenerator) {
+    public function __construct(ITagGenerator $tagGenerator = NULL) {
         $this->setTagGenerator($tagGenerator);
     }
 
-    public function setTagGenerator(ITagGenerator $tagGenerator) {
+    /**
+     * @param \WarriorXK\PHPProtoGen\ITagGenerator|null $tagGenerator
+     */
+    public function setTagGenerator(ITagGenerator $tagGenerator = NULL) {
         $this->_tagGenerator = $tagGenerator;
     }
 
-    public function getTagGenerator() : ITagGenerator {
+    /**
+     * @return \WarriorXK\PHPProtoGen\ITagGenerator|null
+     */
+    public function getTagGenerator() {
         return $this->_tagGenerator;
     }
 
@@ -72,7 +78,17 @@ class Generator {
         return $this->_files[$path] ?? NULL;
     }
 
-    public function getTagForField(Field $field) : int {
+    /**
+     * @param \WarriorXK\PHPProtoGen\Field $field
+     *
+     * @return int|null
+     */
+    public function getTagForField(Field $field) {
+
+        if ($this->_tagGenerator === NULL) {
+            return NULL;
+        }
+
         return $this->_tagGenerator->getTagForField($field);
     }
 

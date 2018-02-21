@@ -33,10 +33,16 @@ class Field {
      */
     protected $_name = NULL;
 
-    public function __construct(string $name, FieldType $type, int $options = 0) {
+    /**
+     * @var int|null
+     */
+    protected $_tag = NULL;
+
+    public function __construct(string $name, FieldType $type, int $tag = NULL, int $options = 0) {
 
         $this->_name = $name;
 
+        $this->setTag($tag);
         $this->setType($type);
         $this->setOptions($options);
 
@@ -108,7 +114,21 @@ class Field {
         return $this->_name;
     }
 
-    protected function _getGenerator() {
+    /**
+     * @param int|null
+     */
+    public function setTag(int $tag = NULL) {
+        $this->_tag = $tag;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getTag() {
+        return $this->_tag;
+    }
+
+    public function getGenerator() {
 
         $message = $this->getMessage();
         if ($message !== NULL) {
@@ -128,12 +148,17 @@ class Field {
      */
     public function exportToString() : string {
 
-        $generator = $this->_getGenerator();
+        $generator = $this->getGenerator();
         if ($generator === NULL) {
             throw new \LogicException('Unable to export field to string without a generator!');
         }
 
-        $str = $this->_type->exportToString() . ' ' . $this->getName() . ' = ' . $generator->getTagForField($this);
+        $tag = $this->getTag() ?: $generator->getTagForField($this);
+        if ($tag === NULL) {
+            throw new \LogicException('Field ' . $this->getMessage()->getName() . '->' . $this->getName() . ' has no tag!');
+        }
+
+        $str = $this->_type->exportToString() . ' ' . $this->getName() . ' = ' . $tag;
 
         $options = [];
         if ($this->hasOption(static::OPTION_DEPRECATED)) {

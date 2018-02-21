@@ -24,7 +24,7 @@ class Utility {
 
     const TYPE_ANY = 'google.protobuf.Any';
 
-    public function PHPTypeToProtoType(string $type) : string {
+    public static function PHPTypeToProtoType(string $type) : string {
 
         switch ($type) {
             case static::T_BOOL:

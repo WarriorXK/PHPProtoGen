@@ -10,5 +10,12 @@ declare(strict_types = 1);
 namespace WarriorXK\PHPProtoGen;
 
 interface ITagGenerator {
-    public function getTagForField(Field $field) : int;
+
+    /**
+     * @param \WarriorXK\PHPProtoGen\Field $field
+     *
+     * @return int|null
+     */
+    public function getTagForField(Field $field);
+
 }

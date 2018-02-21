@@ -50,6 +50,6 @@ class Import {
     }
 
     public function exportToString() : string {
-        return 'import ' . ($this->isPublic() ? 'public ' : '') . $this->getPath();
+        return 'import ' . ($this->isPublic() ? 'public ' : '') . '"' . $this->getPath() . '";';
     }
 }
