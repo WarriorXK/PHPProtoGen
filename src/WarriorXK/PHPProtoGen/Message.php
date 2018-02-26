@@ -65,9 +65,30 @@ class Message {
             throw new \LogicException('Message "' . $this->getName() . '" already has a field named "' . $fieldName . '"');
         }
 
+        $fieldTag = $field->getTag();
+        if ($this->getFieldByTag($fieldTag) !== NULL) {
+            throw new \LogicException('Message "' . $this->getName() . '" already has a field with tag "' . $fieldTag . '"');
+        }
+
         $this->_fields[$fieldName] = $field;
         $field->setMessage($this);
 
+    }
+
+    /**
+     * @param int $tag
+     *
+     * @return \WarriorXK\PHPProtoGen\Field|null
+     */
+    public function getFieldByTag(int $tag) {
+
+        foreach ($this->getFields() as $field) {
+            if ($field->getTag() === $tag) {
+                return $field;
+            }
+        }
+
+        return NULL;
     }
 
     /**
@@ -133,6 +154,25 @@ class Message {
         // Todo: Attempt to minimize the listing by using the to keyword ('reserved 1, 2, 9 to 11;')
 
         return 'reserved ' . implode(', ', array_keys($this->_reservedTags)) . ';';
+    }
+
+    public function getFQMN() : string {
+
+        $file = $this->getFile();
+        if ($file === NULL) {
+            throw new \LogicException('A message needs to be added to a file before its FQMN can be determined');
+        }
+
+        $parts = [];
+
+        $filePackage = $file->getPackage();
+        if ($filePackage !== NULL) {
+            $parts[] = $filePackage;
+        }
+
+        $parts[] = $this->getName();
+
+        return implode('.', $parts);
     }
 
     /**

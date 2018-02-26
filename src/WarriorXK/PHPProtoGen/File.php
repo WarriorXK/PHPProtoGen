@@ -27,6 +27,11 @@ class File {
     protected $_messages = [];
 
     /**
+     * @var string|null
+     */
+    protected $_package = NULL;
+
+    /**
      * @var \WarriorXK\PHPProtoGen\Import[]
      */
     protected $_imports = [];
@@ -80,6 +85,20 @@ class File {
      */
     public function getSyntaxVersion() : int {
         return $this->_syntaxVersion;
+    }
+
+    /**
+     * @param string|null $package
+     */
+    public function setPackage(string $package = NULL) {
+        $this->_package = $package;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPackage() {
+        return $this->_package;
     }
 
     public function addImport(Import $import) : bool {
@@ -160,17 +179,23 @@ class File {
 
         }
 
-        $imports = $this->getImports();
-        foreach ($imports as $import) {
-            $topLines[] = $import->exportToString();
+        $topLines[] = 'syntax = "proto' . $this->getSyntaxVersion() . '";';
+
+        $package = $this->getPackage();
+        if ($package !== NULL) {
+            $topLines[] = '';
+            $topLines[] = 'package ' . $package . ';';
         }
 
         // Empty line between imports and defines
+        $imports = $this->getImports();
         if (!empty($imports)) {
             $topLines[] = '';
         }
 
-        $topLines[] = 'syntax = "proto' . $this->getSyntaxVersion() . '";';
+        foreach ($imports as $import) {
+            $topLines[] = $import->exportToString();
+        }
 
         return PHP_EOL . implode(PHP_EOL, $topLines) . PHP_EOL . PHP_EOL . implode(PHP_EOL . PHP_EOL, $strMessages) . PHP_EOL;
     }
