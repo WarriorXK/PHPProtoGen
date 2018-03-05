@@ -171,7 +171,7 @@ class File {
                     $type = $messageField->getType()->getType();
                     if ($type === Utility::TYPE_ANY) {
                         $this->addImport(new Import('google/protobuf/any.proto'));
-                        break 2;
+                        break;
                     }
 
                 }
