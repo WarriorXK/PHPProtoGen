@@ -158,11 +158,12 @@ class File {
         $strMessages = [];
         $topLines = [];
 
-        if (!isset($this->getImports()['google/protobuf/any.proto'])) {
 
-            foreach ($this->_messages as $message) {
+        foreach ($this->_messages as $message) {
 
-                $strMessages[] = $message->exportToString();
+            $strMessages[] = $message->exportToString();
+
+            if (!isset($this->getImports()['google/protobuf/any.proto'])) {
 
                 $messageFields = $message->getFields();
                 foreach ($messageFields as $messageField) {
