@@ -50,6 +50,10 @@ class FieldType {
         return new static('bytes', $repeatable);
     }
 
+    public static function Message(Message $message, $repeatable = FALSE) {
+        return new static($message->getFQMN(), $repeatable);
+    }
+
     public function __construct(string $type, bool $repeatable = FALSE) {
 
         $this->setRepeatable($repeatable);
