@@ -32,6 +32,11 @@ class File {
     protected $_package = NULL;
 
     /**
+     * @var string[]
+     */
+    protected $_options = [];
+
+    /**
      * @var \WarriorXK\PHPProtoGen\Import[]
      */
     protected $_imports = [];
@@ -92,6 +97,27 @@ class File {
      */
     public function setPackage(string $package = NULL) {
         $this->_package = $package;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getOptions() : array {
+        return $this->_options;
+    }
+
+    /**
+     * @param string      $option
+     * @param string|NULL $value NULL will unset the value
+     */
+    public function setOption(string $option, string $value = NULL) {
+
+        if ($value === NULL) {
+            unset($this->_options[$option]);
+        } else {
+            $this->_options[$option] = $value;
+        }
+
     }
 
     /**
@@ -186,6 +212,17 @@ class File {
         if ($package !== NULL) {
             $topLines[] = '';
             $topLines[] = 'package ' . $package . ';';
+        }
+
+        $options = $this->getOptions();
+        if (!empty($options)) {
+
+            $topLines[] = '';
+
+            foreach ($options as $option => $value) {
+                $topLines[] = 'option ' . $option . ' = "' . $value. '";';
+            }
+
         }
 
         // Empty line between imports and defines
