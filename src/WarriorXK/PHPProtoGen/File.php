@@ -108,7 +108,7 @@ class File {
 
     /**
      * @param string      $option
-     * @param string|NULL $value NULL will unset the value
+     * @param string|NULL $value  NULL will unset the value
      */
     public function setOption(string $option, string $value = NULL) {
 
@@ -220,7 +220,7 @@ class File {
             $topLines[] = '';
 
             foreach ($options as $option => $value) {
-                $topLines[] = 'option ' . $option . ' = "' . $value. '";';
+                $topLines[] = 'option ' . $option . ' = "' . $value . '";';
             }
 
         }
