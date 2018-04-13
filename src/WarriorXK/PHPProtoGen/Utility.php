@@ -37,6 +37,8 @@ class Utility {
                 return 'string';
             case static::T_ARRAY:
                 throw new \Exception('Arrays have no direct counterpart in proto!');
+            default:
+                throw new \Exception('Unhandled type: ' . $type);
         }
 
     }
