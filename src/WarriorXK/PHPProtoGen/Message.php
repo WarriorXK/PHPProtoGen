@@ -12,6 +12,11 @@ namespace WarriorXK\PHPProtoGen;
 class Message {
 
     /**
+     * @var \WarriorXK\PHPProtoGen\Field[][]
+     */
+    protected $_oneOfGroups = [];
+
+    /**
      * @var bool[]
      */
     protected $_reservedTags = [];
@@ -53,6 +58,91 @@ class Message {
      */
     public function getFile() {
         return $this->_file;
+    }
+
+    /**
+     * Groups the provided fields in a new oneOf group, returns the group index
+     *
+     * @param string                         $groupName
+     * @param \WarriorXK\PHPProtoGen\Field[] $fields
+     */
+    public function groupFieldsInOneOf(string $groupName, array $fields) {
+
+        if (empty($fields)) {
+            throw new \InvalidArgumentException('The provided array can not be empty!');
+        }
+        if (isset($this->_oneOfGroups[$groupName])) {
+            throw new \LogicException('The groupName "' . $groupName . '" is already in use');
+        }
+
+        foreach ($fields as $key => $field) {
+
+            if (!$field instanceof Field) {
+                throw new \InvalidArgumentException('Object at index ' . $key . ' is not an instance of ' . Field::class);
+            }
+
+            if ($field->getMessage() !== $this) {
+                throw new \LogicException('One of the provided fields "' . $field->getName() . '" is not a part of this message');
+            }
+
+            if ($this->getOneOfGroupNameForField($field) !== NULL) {
+                throw new \LogicException('One of the provided fields "' . $field->getName() . '" is already part of a group');
+            }
+
+        }
+
+        $this->_oneOfGroups[$groupName] = $fields;
+
+    }
+
+    /**
+     * Adds the provided field to an existing oneOf group
+     *
+     * @param string                       $groupName
+     * @param \WarriorXK\PHPProtoGen\Field $field
+     */
+    public function addFieldToOneOfGroup(string $groupName, Field $field) {
+
+        if ($field->getMessage() !== $this) {
+            throw new \LogicException('The provided field "' . $field->getName() . '" is not apart of this message');
+        }
+        if (!isset($this->_oneOfGroups[$groupName])) {
+            throw new \OutOfRangeException('The provided group "' . $groupName . '" does not exist on this message');
+        }
+
+        $currentGroupIndex = $this->getOneOfGroupNameForField($field);
+        if ($currentGroupIndex === $groupName) {
+            return; // Field is already a member of said group
+        } elseif ($currentGroupIndex !== NULL) {
+            throw new \LogicException('The provided field "' . $field->getName() . '" is already apart of another oneOf group ' . $currentGroupIndex);
+        }
+
+        $this->_oneOfGroups[$groupName][] = $field;
+
+    }
+
+    /**
+     * Returns the groupName for the specified field
+     *
+     * @param \WarriorXK\PHPProtoGen\Field $testField
+     *
+     * @return string|null
+     */
+    public function getOneOfGroupNameForField(Field $testField) {
+
+        foreach ($this->_oneOfGroups as $groupName => $oneOfGroup) {
+
+            foreach ($oneOfGroup as $field) {
+
+                if ($field === $testField) {
+                    return $groupName;
+                }
+
+            }
+
+        }
+
+        return NULL;
     }
 
     /**
@@ -191,7 +281,25 @@ class Message {
         }
 
         foreach ($this->getFields() as $field) {
+
+            if ($this->getOneOfGroupNameForField($field) !== NULL) {
+                continue;
+            }
+
             $str .= $in . $field->exportToString() . PHP_EOL;
+
+        }
+
+        foreach ($this->_oneOfGroups as $groupName => $fields) {
+
+            $str .= $in . 'oneof ' . $groupName . ' {' . PHP_EOL;
+
+            foreach ($fields as $field) {
+                $str .= $in . $in . $field->exportToString() . PHP_EOL;
+            }
+
+            $str .= $in . '}' . PHP_EOL;
+
         }
 
         return $str . '}';
