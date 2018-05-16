@@ -127,6 +127,20 @@ class File {
         return $this->_package;
     }
 
+    /**
+     * @param \WarriorXK\PHPProtoGen\File $file
+     *
+     * @return bool
+     */
+    public function addFileImport(File $file) : bool {
+        return $this->addImport(new Import($file->getPath()));
+    }
+
+    /**
+     * @param \WarriorXK\PHPProtoGen\Import $import
+     *
+     * @return bool
+     */
     public function addImport(Import $import) : bool {
 
         /** @var \WarriorXK\PHPProtoGen\Import|null $localImport */
