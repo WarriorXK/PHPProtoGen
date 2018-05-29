@@ -128,11 +128,11 @@ class File {
     }
 
     /**
-     * @param \WarriorXK\PHPProtoGen\File $file
+     * @param self $file
      *
      * @return bool
      */
-    public function addFileImport(File $file) : bool {
+    public function addFileImport(self $file) : bool {
         return $this->addImport(new Import($file->getPath()));
     }
 
