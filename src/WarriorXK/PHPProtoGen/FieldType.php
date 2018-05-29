@@ -34,6 +34,14 @@ class FieldType {
         return new static('int64', $repeatable);
     }
 
+    public static function SInt(bool $repeatable = FALSE) {
+        return new static('sint64', $repeatable);
+    }
+
+    public static function UInt(bool $repeatable = FALSE) {
+        return new static('uint64', $repeatable);
+    }
+
     public static function Float(bool $repeatable = FALSE) {
         return new static('float', $repeatable);
     }
