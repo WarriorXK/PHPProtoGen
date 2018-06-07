@@ -42,6 +42,11 @@ class File {
     protected $_imports = [];
 
     /**
+     * @var \WarriorXK\PHPProtoGen\Enum[]
+     */
+    protected $_enums = [];
+
+    /**
      * @var string
      */
     protected $_path = NULL;
@@ -184,6 +189,21 @@ class File {
     }
 
     /**
+     * @param \WarriorXK\PHPProtoGen\Enum $enum
+     */
+    public function addEnum(Enum $enum) {
+
+        $name = $enum->getName();
+        if (isset($this->_enums[$name])) {
+            throw new \LogicException('An enum with name "' . $name . '" already exists in file "' . $this->getPath() . '"');
+        }
+
+        $this->_enums[$name] = $enum;
+        $enum->setFile($this);
+
+    }
+
+    /**
      * @return string
      */
     public function getPath() : string {
@@ -195,12 +215,12 @@ class File {
      */
     public function exportToString() : string {
 
-        $strMessages = [];
+        $strClasses = [];
         $topLines = [];
 
         foreach ($this->_messages as $message) {
 
-            $strMessages[] = $message->exportToString();
+            $strClasses[] = $message->exportToString();
 
             if (!isset($this->getImports()['google/protobuf/any.proto'])) {
 
@@ -217,6 +237,10 @@ class File {
 
             }
 
+        }
+
+        foreach ($this->_enums as $enum) {
+            $strClasses[] = $enum->exportToString();
         }
 
         $topLines[] = 'syntax = "proto' . $this->getSyntaxVersion() . '";';
@@ -248,6 +272,6 @@ class File {
             $topLines[] = $import->exportToString();
         }
 
-        return PHP_EOL . implode(PHP_EOL, $topLines) . PHP_EOL . PHP_EOL . implode(PHP_EOL . PHP_EOL, $strMessages) . PHP_EOL;
+        return PHP_EOL . implode(PHP_EOL, $topLines) . PHP_EOL . PHP_EOL . implode(PHP_EOL . PHP_EOL, $strClasses) . PHP_EOL;
     }
 }
