@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Created by PhpStorm.
  * User: kevinmeijer
@@ -33,7 +36,7 @@ class Enum {
     /**
      * Enum constructor.
      *
-     * @param string         $name
+     * @param string   $name
      * @param string[] $options
      */
     public function __construct(string $name, array $options = []) {
