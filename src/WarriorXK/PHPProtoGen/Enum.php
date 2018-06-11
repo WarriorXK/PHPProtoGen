@@ -36,17 +36,10 @@ class Enum {
     /**
      * Enum constructor.
      *
-     * @param string   $name
-     * @param string[] $options
+     * @param string $name
      */
-    public function __construct(string $name, array $options = []) {
-
+    public function __construct(string $name) {
         $this->_name = $name;
-
-        foreach ($options as $key => $option) {
-            $this->setOption($key, $option);
-        }
-
     }
 
     /**
