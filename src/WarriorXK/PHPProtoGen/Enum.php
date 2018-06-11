@@ -148,5 +148,4 @@ class Enum {
 
         return $str . '}';
     }
-
 }
