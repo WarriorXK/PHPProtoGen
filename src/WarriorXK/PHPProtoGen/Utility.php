@@ -39,8 +39,9 @@ class Utility {
     /**
      * @param string $type
      *
-     * @return string
      * @throws \Exception
+     *
+     * @return string
      */
     public static function PHPTypeToProtoType(string $type) : string {
 

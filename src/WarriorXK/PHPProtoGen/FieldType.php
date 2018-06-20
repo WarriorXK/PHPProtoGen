@@ -83,7 +83,7 @@ class FieldType {
         return new static($enum->getFQMN(), $repeatable);
     }
 
-    public static function Map(FieldType $keyType, FieldType $valueType) {
+    public static function Map(self $keyType, self $valueType) {
 
         $map = new static(Utility::TYPE_MAP, FALSE);
         $map->setValueType($valueType);
@@ -103,7 +103,7 @@ class FieldType {
 
     }
 
-    public function setValueType(FieldType $type) {
+    public function setValueType(self $type) {
 
         if ($this->getType() !== Utility::TYPE_MAP) {
             throw new \LogicException('The property ValueType is only available for map types');
@@ -117,7 +117,7 @@ class FieldType {
         return $this->_valueType;
     }
 
-    public function setKeyType(FieldType $type) {
+    public function setKeyType(self $type) {
 
         if ($this->getType() !== Utility::TYPE_MAP) {
             throw new \LogicException('The property KeyType is only available for map types');
