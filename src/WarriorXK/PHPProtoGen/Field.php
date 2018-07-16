@@ -11,7 +11,8 @@ namespace WarriorXK\PHPProtoGen;
 
 class Field {
 
-    const OPTION_DEPRECATED = 0b00000001;
+    const OPTION_DEPRECATED = 0b00000001,
+          OPTION_PACKED     = 0b00000010;
 
     /**
      * @var \WarriorXK\PHPProtoGen\Message|null
@@ -128,6 +129,9 @@ class Field {
         return $this->_tag;
     }
 
+    /**
+     * @return null|\WarriorXK\PHPProtoGen\Generator
+     */
     public function getGenerator() {
 
         $message = $this->getMessage();
@@ -163,6 +167,9 @@ class Field {
         $options = [];
         if ($this->hasOption(static::OPTION_DEPRECATED)) {
             $options[] = 'deprecated=true';
+        }
+        if ($this->hasOption(static::OPTION_PACKED)) {
+            $options[] = 'packed=true';
         }
 
         // Todo: Validate that multiple options are seperated by commas (Currently no implementation exists)
