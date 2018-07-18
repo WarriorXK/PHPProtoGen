@@ -12,7 +12,7 @@ namespace WarriorXK\PHPProtoGen;
 class Field {
 
     const OPTION_DEPRECATED = 0b00000001,
-          OPTION_PACKED     = 0b00000010;
+          OPTION_PACKED = 0b00000010;
 
     /**
      * @var \WarriorXK\PHPProtoGen\Message|null
