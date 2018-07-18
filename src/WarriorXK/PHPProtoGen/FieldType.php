@@ -67,6 +67,10 @@ class FieldType {
         return new static(Utility::TYPE_FLOAT, $repeatable);
     }
 
+    public static function Double(bool $repeatable = FALSE) {
+        return new static(Utility::TYPE_DOUBLE, $repeatable);
+    }
+
     public static function String(bool $repeatable = FALSE) {
         return new static(Utility::TYPE_STRING, $repeatable);
     }

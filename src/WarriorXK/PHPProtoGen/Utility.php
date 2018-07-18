@@ -32,7 +32,8 @@ class Utility {
           TYPE_STRING = 'string',
           TYPE_BYTES = 'bytes',
           TYPE_BOOL = 'bool',
-          TYPE_FLOAT = 'float';
+          TYPE_FLOAT = 'float',
+          TYPE_DOUBLE = 'double';
 
     const MESSAGE_ANY = 'google.protobuf.Any';
 
