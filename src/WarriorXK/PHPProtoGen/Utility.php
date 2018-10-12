@@ -35,7 +35,9 @@ class Utility {
           TYPE_FLOAT = 'float',
           TYPE_DOUBLE = 'double';
 
-    const MESSAGE_ANY = 'google.protobuf.Any';
+    const MESSAGE_ANY = 'google.protobuf.Any',
+          MESSAGE_STRUCT = 'google.protobuf.Struct',
+          MESSAGE_VALUE = 'google.protobuf.Value';
 
     /**
      * @param string $type

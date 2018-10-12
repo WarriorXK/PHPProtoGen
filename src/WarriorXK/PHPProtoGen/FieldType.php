@@ -96,6 +96,14 @@ class FieldType {
         return $map;
     }
 
+    public static function Struct(bool $repeatable = FALSE) {
+        return new static(Utility::MESSAGE_STRUCT, $repeatable);
+    }
+
+    public static function Value(bool $repeatable = FALSE) {
+        return new static(Utility::MESSAGE_VALUE, $repeatable);
+    }
+
     public static function Message(Message $message, $repeatable = FALSE) {
         return new static($message->getFQMN(), $repeatable);
     }
