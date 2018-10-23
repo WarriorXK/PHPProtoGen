@@ -222,17 +222,19 @@ class File {
 
             $strClasses[] = $message->exportToString();
 
-            if (!isset($this->getImports()['google/protobuf/any.proto'])) {
+            $messageFields = $message->getFields();
+            foreach ($messageFields as $messageField) {
 
-                $messageFields = $message->getFields();
-                foreach ($messageFields as $messageField) {
+                $typeSourcePath = $messageField->getType()->getSourceFilePath();
+                if ($typeSourcePath === $this->getPath()) {
+                    // Don't include ourself
+                    continue;
+                }
 
-                    $type = $messageField->getType()->getType();
-                    if ($type === Utility::MESSAGE_ANY) {
-                        $this->addImport(new Import('google/protobuf/any.proto'));
-                        break;
-                    }
+                $imports = $this->getImports();
 
+                if ($typeSourcePath !== NULL && !isset($imports[$typeSourcePath])) {
+                    $this->addImport(new Import($typeSourcePath));
                 }
 
             }

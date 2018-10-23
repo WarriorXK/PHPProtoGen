@@ -23,6 +23,11 @@ class FieldType {
     ];
 
     /**
+     * @var string|null
+     */
+    protected $_sourceFilePath = NULL;
+
+    /**
      * @var bool
      */
     protected $_repeatable = FALSE;
@@ -48,7 +53,11 @@ class FieldType {
     protected $_type = NULL;
 
     public static function Any(bool $repeatable = FALSE) {
-        return new static(Utility::MESSAGE_ANY, $repeatable);
+
+        $type = new static(Utility::MESSAGE_ANY, $repeatable);
+        $type->_sourceFilePath = 'google/protobuf/any.proto';
+
+        return $type;
     }
 
     public static function Int(bool $repeatable = FALSE) {
@@ -105,7 +114,11 @@ class FieldType {
     }
 
     public static function Message(Message $message, $repeatable = FALSE) {
-        return new static($message->getFQMN(), $repeatable);
+
+        $type = new static($message->getFQMN(), $repeatable);
+        $type->_sourceFilePath = $message->getFile()->getPath();
+
+        return $type;
     }
 
     public function __construct(string $type, bool $repeatable = FALSE) {
@@ -113,6 +126,10 @@ class FieldType {
         $this->setRepeatable($repeatable);
         $this->setType($type);
 
+    }
+
+    public function getSourceFilePath() {
+        return $this->_sourceFilePath;
     }
 
     public function setValueType(self $type) {
