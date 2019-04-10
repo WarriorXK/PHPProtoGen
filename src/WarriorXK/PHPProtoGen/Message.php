@@ -100,14 +100,21 @@ class Message {
      *
      * @param string                       $groupName
      * @param \WarriorXK\PHPProtoGen\Field $field
+     * @param bool                         $allowCreation
      */
-    public function addFieldToOneOfGroup(string $groupName, Field $field) {
+    public function addFieldToOneOfGroup(string $groupName, Field $field, bool $allowCreation = FALSE) {
 
         if ($field->getMessage() !== $this) {
             throw new \LogicException('The provided field "' . $field->getName() . '" is not apart of this message');
         }
         if (!isset($this->_oneOfGroups[$groupName])) {
-            throw new \OutOfRangeException('The provided group "' . $groupName . '" does not exist on this message');
+
+            if ($allowCreation) {
+                $this->_oneOfGroups[$groupName] = [];
+            } else {
+                throw new \OutOfRangeException('The provided group "' . $groupName . '" does not exist on this message');
+            }
+
         }
 
         $currentGroupIndex = $this->getOneOfGroupNameForField($field);
