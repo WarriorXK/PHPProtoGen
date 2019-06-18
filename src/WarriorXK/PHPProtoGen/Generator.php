@@ -12,16 +12,21 @@ namespace WarriorXK\PHPProtoGen;
 class Generator {
 
     /**
+     * @var string
+     */
+    protected $_singleImportFileName = '';
+
+    /**
      * @var \WarriorXK\PHPProtoGen\ITagGenerator|null
      */
     protected $_tagGenerator = NULL;
 
     /**
-     * The root file is the file from which we include the others
+     * If we should generate a single file which imports everything with 'import public' to prevent recursion
      *
-     * @var \WarriorXK\PHPProtoGen\File
+     * @var bool
      */
-    protected $_rootFile = NULL;
+    protected $_singleImport = FALSE;
 
     /**
      * @var \WarriorXK\PHPProtoGen\File[]
@@ -48,11 +53,10 @@ class Generator {
 
     /**
      * @param \WarriorXK\PHPProtoGen\File $file
-     * @param bool                        $setAsRoot
      *
      * @throws \LogicException
      */
-    public function addFile(File $file, bool $setAsRoot = FALSE) {
+    public function addFile(File $file) {
 
         $filePath = $file->getPath();
         if (isset($this->_files[$filePath])) {
@@ -61,12 +65,40 @@ class Generator {
 
         $this->_files[$filePath] = $file;
 
-        if ($setAsRoot || $this->_rootFile === NULL) {
-            $this->_rootFile = $file;
-        }
-
         $file->setGenerator($this);
 
+    }
+
+    /**
+     * @param bool $singleImport
+     *
+     * @return void
+     */
+    public function setUseSingleImport(bool $singleImport) {
+        $this->_singleImport = $singleImport;
+    }
+
+    /**
+     * @return bool
+     */
+    public function usesSingleImport() {
+        return $this->_singleImport;
+    }
+
+    /**
+     * @param string $filename
+     *
+     * @return void
+     */
+    public function setSingleImportFileName(string $filename) {
+        $this->_singleImportFileName = $filename;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSingleImportFileName() : string {
+        return $this->_singleImportFileName;
     }
 
     /**
@@ -101,8 +133,49 @@ class Generator {
             throw new \LogicException('Add files before exporting');
         }
 
+        $usesSingleImport = $this->usesSingleImport();
+        $singleImportFileName = $this->getSingleImportFileName();
+
+        if ($usesSingleImport && !$singleImportFileName) {
+            throw new \LogicException('Unable to use single import file without the filename being set!');
+        }
+
         foreach ($this->_files as $file) {
             file_put_contents($dir . DIRECTORY_SEPARATOR . $file->getPath(), $file->exportToString());
+        }
+
+        if ($usesSingleImport) {
+
+            /** @var \WarriorXK\PHPProtoGen\Import[] $uniqueImports */
+            $uniqueImports = [];
+
+            if (!$singleImportFileName) {
+                throw new \LogicException('Unable to use single import file without the filename being set!');
+            }
+
+            $importFile = new File($singleImportFileName);
+            $importFile->setGenerator($this);
+
+            foreach ($this->_files as $file) {
+
+                foreach ($file->getImports() as $import) {
+
+                    $path = $import->getPath();
+                    if (isset($uniqueImports[$path])) {
+                        continue;
+                    }
+
+                    $import = new Import($path, TRUE);
+                    $uniqueImports[$path] = TRUE;
+
+                    $importFile->addImport($import);
+
+                }
+
+            }
+
+            file_put_contents($dir . DIRECTORY_SEPARATOR . $importFile->getPath(), $importFile->exportToString(TRUE));
+
         }
 
     }

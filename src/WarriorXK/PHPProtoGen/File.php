@@ -213,7 +213,7 @@ class File {
     /**
      * @return string
      */
-    public function exportToString() : string {
+    public function exportToString(bool $ignoreSingleImport = FALSE) : string {
 
         $strClasses = [];
         $topLines = [];
@@ -264,16 +264,21 @@ class File {
 
         }
 
-        // Empty line between imports and defines
-        $imports = $this->getImports();
-        if (!empty($imports)) {
-            $topLines[] = '';
+        $generator = $this->getGenerator();
+        if ($ignoreSingleImport || !$generator->usesSingleImport()) {
+
+            // Empty line between imports and defines
+            $imports = $this->getImports();
+            if (!empty($imports)) {
+                $topLines[] = '';
+            }
+
+            foreach ($imports as $import) {
+                $topLines[] = $import->exportToString();
+            }
+
         }
 
-        foreach ($imports as $import) {
-            $topLines[] = $import->exportToString();
-        }
-
-        return PHP_EOL . implode(PHP_EOL, $topLines) . PHP_EOL . PHP_EOL . implode(PHP_EOL . PHP_EOL, $strClasses) . PHP_EOL;
+        return PHP_EOL . implode(PHP_EOL, $topLines) . PHP_EOL . ($strClasses ? PHP_EOL . implode(PHP_EOL . PHP_EOL, $strClasses) : '' . PHP_EOL);
     }
 }
