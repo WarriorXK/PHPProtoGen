@@ -279,6 +279,6 @@ class File {
 
         }
 
-        return PHP_EOL . implode(PHP_EOL, $topLines) . PHP_EOL . ($strClasses ? PHP_EOL . implode(PHP_EOL . PHP_EOL, $strClasses) : '' . PHP_EOL);
+        return PHP_EOL . implode(PHP_EOL, $topLines) . PHP_EOL . ($strClasses ? PHP_EOL . implode(PHP_EOL . PHP_EOL, $strClasses) . PHP_EOL : '');
     }
 }
