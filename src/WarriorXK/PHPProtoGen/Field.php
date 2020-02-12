@@ -15,6 +15,11 @@ class Field {
           OPTION_PACKED = 0b00000010;
 
     /**
+     * @var string
+     */
+    protected $_comment = '';
+
+    /**
      * @var \WarriorXK\PHPProtoGen\Message|null
      */
     protected $_message = NULL;
@@ -47,6 +52,22 @@ class Field {
         $this->setType($type);
         $this->setOptions($options);
 
+    }
+
+    /**
+     * @param string $comment
+     *
+     * @return void
+     */
+    public function setComment(string $comment) {
+        $this->_comment = $comment;
+    }
+
+    /**
+     * @return string
+     */
+    public function getComment() : string {
+        return $this->_comment;
     }
 
     /**
@@ -148,9 +169,11 @@ class Field {
     }
 
     /**
+     * @param int $indentationLevel
+     *
      * @return string
      */
-    public function exportToString() : string {
+    public function exportToString(int $indentationLevel = 0) : string {
 
         $generator = $this->getGenerator();
         if ($generator === NULL) {
@@ -162,7 +185,14 @@ class Field {
             throw new \LogicException('Field ' . $this->getMessage()->getName() . '->' . $this->getName() . ' has no tag!');
         }
 
-        $str = $this->_type->exportToString() . ' ' . $this->getName() . ' = ' . $tag;
+        $commentsStr = Utility::GenerateComment($this->getComment(), $indentationLevel);
+        if (strlen($commentsStr) > 0) {
+            $commentsStr .= PHP_EOL;
+        }
+
+        $in = str_repeat('    ', $indentationLevel);
+
+        $str = $commentsStr . $in . $this->_type->exportToString() . ' ' . $this->getName() . ' = ' . $tag;
 
         $options = [];
         if ($this->hasOption(static::OPTION_DEPRECATED)) {

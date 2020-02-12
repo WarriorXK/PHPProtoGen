@@ -64,4 +64,36 @@ class Utility {
         }
 
     }
+
+    /**
+     * @param string $comment
+     * @param int    $indentationLevel
+     *
+     * @return string
+     */
+    public static function GenerateComment(string $comment, int $indentationLevel = 0, bool $forceMultiLine = FALSE) : string {
+
+        $in = str_repeat('    ', $indentationLevel);
+
+        $commentsStr = '';
+
+        if (strlen($comment) > 0) {
+
+            $commentLines = explode(PHP_EOL, $comment);
+            if (count($commentLines) === 1 && !$forceMultiLine) {
+                $commentsStr = $in . '// ' . $commentLines[0];
+            } else {
+
+                $commentsStr = $in . '/*' . PHP_EOL;
+                foreach ($commentLines as $line) {
+                    $commentsStr .= $in . ' * ' . $line . PHP_EOL;
+                }
+                $commentsStr .= $in . ' */';
+
+            }
+
+        }
+
+        return $commentsStr;
+    }
 }

@@ -22,6 +22,16 @@ class Message {
     protected $_reservedTags = [];
 
     /**
+     * @var \WarriorXK\PHPProtoGen\Message[]
+     */
+    protected $_messages = [];
+
+    /**
+     * @var string
+     */
+    protected $_comment = '';
+
+    /**
      * @var \WarriorXK\PHPProtoGen\Field[]
      */
     protected $_fields = [];
@@ -153,6 +163,58 @@ class Message {
     }
 
     /**
+     * @param string $comment
+     *
+     * @return void
+     */
+    public function setComment(string $comment) {
+        $this->_comment = $comment;
+    }
+
+    /**
+     * @return string
+     */
+    public function getComment() : string {
+        return $this->_comment;
+    }
+
+    /**
+     * @param \WarriorXK\PHPProtoGen\Message $message
+     *
+     * @return void
+     */
+    public function addMessage(Message $message) {
+
+        $theirFile = $message->getFile();
+        $ourFile = $this->getFile();
+
+        if ($ourFile === NULL) {
+            throw new \LogicException('A message needs to be added to a file before calling addMessage on it');
+        }
+
+        if ($theirFile === NULL) {
+            $message->setFile($ourFile);
+        } elseif ($theirFile !== $ourFile) {
+            throw new \LogicException('Message ' . $message->getFQMN() . ' has already been added to a different file');
+        }
+
+        $fqmn = $message->getFQMN();
+        if (isset($this->_messages[$fqmn])) {
+            throw new \LogicException('Message ' . $this->getFQMN() . ' already has a child message qih FQMN ' . $fqmn);
+        }
+
+        $this->_messages[$fqmn] = $message;
+
+    }
+
+    /**
+     * @return \WarriorXK\PHPProtoGen\Message[]
+     */
+    public function getMessages() : array {
+        return $this->_messages;
+    }
+
+    /**
      * @param \WarriorXK\PHPProtoGen\Field $field
      */
     public function addField(Field $field) {
@@ -273,18 +335,30 @@ class Message {
     }
 
     /**
+     * @param int $indentationLevel
+     *
      * @return string
      */
-    public function exportToString() : string {
+    public function exportToString(int $indentationLevel = 0) : string {
 
-        $in = '    ';
+        $singleIndent = '    ';
+        $in = str_repeat($singleIndent, $indentationLevel);
 
-        $str = 'message ' . $this->getName() . ' {' . PHP_EOL;
+        $commentsStr = Utility::GenerateComment($this->getComment(), $indentationLevel);
+        if (strlen($commentsStr) > 0) {
+            $commentsStr .= PHP_EOL;
+        }
+
+        $str = $commentsStr . $in . 'message ' . $this->getName() . ' {' . PHP_EOL;
 
         $reservedStr = $this->_reservedTagsStr();
 
         if ($reservedStr !== '') {
-            $str .= $in . $reservedStr . PHP_EOL;
+            $str .= $in . $singleIndent . $reservedStr . PHP_EOL;
+        }
+
+        foreach ($this->getMessages() as $message) {
+            $str .= $message->exportToString($indentationLevel + 1) . PHP_EOL;
         }
 
         foreach ($this->getFields() as $field) {
@@ -293,22 +367,22 @@ class Message {
                 continue;
             }
 
-            $str .= $in . $field->exportToString() . PHP_EOL;
+            $str .= $field->exportToString($indentationLevel + 1) . PHP_EOL;
 
         }
 
         foreach ($this->_oneOfGroups as $groupName => $fields) {
 
-            $str .= $in . 'oneof ' . $groupName . ' {' . PHP_EOL;
+            $str .= $in . $singleIndent . 'oneof ' . $groupName . ' {' . PHP_EOL;
 
             foreach ($fields as $field) {
-                $str .= $in . $in . $field->exportToString() . PHP_EOL;
+                $str .= $field->exportToString($indentationLevel + 2) . PHP_EOL;
             }
 
-            $str .= $in . '}' . PHP_EOL;
+            $str .= $in . $singleIndent . '}' . PHP_EOL;
 
         }
 
-        return $str . '}';
+        return $str . $in . '}';
     }
 }
