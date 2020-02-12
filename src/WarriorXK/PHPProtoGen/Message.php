@@ -183,7 +183,7 @@ class Message {
      *
      * @return void
      */
-    public function addMessage(Message $message) {
+    public function addMessage(self $message) {
 
         $theirFile = $message->getFile();
         $ourFile = $this->getFile();
