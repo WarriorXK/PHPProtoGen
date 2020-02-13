@@ -78,21 +78,14 @@ class Utility {
 
         sort($ints);
 
-        $currentMax = NULL;
-        $currentMin = NULL;
+        $firstInt = reset($ints) ?: NULL;
+        $currentMax = $firstInt;
+        $currentMin = $firstInt;
 
-        foreach ($ints as $int) {
+        foreach ($ints as $key => $int) {
 
             if (!is_int($int)) {
-                throw new \InvalidArgumentException('Only integers are allowed');
-            }
-
-            if ($currentMin === NULL) { // We are starting a new range
-
-                $currentMax = $int;
-                $currentMin = $int;
-
-                continue;
+                throw new \InvalidArgumentException('Encountered non-integer at key ' . $key);
             }
 
             if ($int === $currentMax) { // Double occurance of the same value, allowed
@@ -104,7 +97,7 @@ class Utility {
                 continue;
             }
 
-            // We've reached the end of the current range
+            // The current int doesn't match the current range, add the range and start a new one with the current digit
             $ranges[] = [
                 'min' => $currentMin,
                 'max' => $currentMax,
