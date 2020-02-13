@@ -17,7 +17,7 @@ class Message {
     protected $_oneOfGroups = [];
 
     /**
-     * @var bool[]
+     * @var int[]
      */
     protected $_reservedTags = [];
 
@@ -278,7 +278,7 @@ class Message {
 
         $range = range($start, $end);
         foreach ($range as $tag) {
-            $this->_reservedTags[$tag] = TRUE;
+            $this->_reservedTags[$tag] = $tag;
         }
 
     }
@@ -294,7 +294,7 @@ class Message {
      * @param int $tag
      */
     public function addReservedTag(int $tag) {
-        $this->_reservedTags[$tag] = TRUE;
+        $this->_reservedTags[$tag] = $tag;
     }
 
     /**
@@ -304,15 +304,32 @@ class Message {
         return $this->_name;
     }
 
+    /**
+     * @return string
+     */
     protected function _reservedTagsStr() : string {
 
         if (empty($this->_reservedTags)) {
             return '';
         }
 
-        // Todo: Attempt to minimize the listing by using the to keyword ('reserved 1, 2, 9 to 11;')
+        $strRanges = [];
 
-        return 'reserved ' . implode(', ', array_keys($this->_reservedTags)) . ';';
+        $ranges = Utility::RangesFromInts($this->_reservedTags);
+        foreach ($ranges as $range) {
+
+            if ($range['min'] === $range['max']) {
+                $strRanges[] = (string) $range['min'];
+            } elseif (($range['min'] + 1) === $range['max']) { // Range of 2, convert it to 2 entries
+                $strRanges[] = (string) $range['min'];
+                $strRanges[] = (string) $range['max'];
+            } else {
+                $strRanges[] = $range['min'] . ' to ' . $range['max'];
+            }
+
+        }
+
+        return 'reserved ' . implode(', ', $strRanges) . ';';
     }
 
     public function getFQMN() : string {

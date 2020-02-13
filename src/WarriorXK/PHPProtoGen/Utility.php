@@ -66,6 +66,68 @@ class Utility {
     }
 
     /**
+     * Converts an array of integers to an array of ranges, so [1, 2, 3, 9, 10, 15] becomes [[min => 1, max=> 3], [min => 9, max => 10], [min => 15, max => 15]]
+     *
+     * @param int[] $ints
+     *
+     * @return int[][]
+     */
+    public static function RangesFromInts(array $ints) : array {
+
+        $ranges = [];
+
+        sort($ints);
+
+        $currentMax = NULL;
+        $currentMin = NULL;
+
+        foreach ($ints as $int) {
+
+            if (!is_int($int)) {
+                throw new \InvalidArgumentException('Only integers are allowed');
+            }
+
+            if ($currentMin === NULL) { // We are starting a new range
+
+                $currentMax = $int;
+                $currentMin = $int;
+
+                continue;
+            }
+
+            if ($int === $currentMax) { // Double occurance of the same value, allowed
+                continue;
+            }
+
+            if ($int === ($currentMax + 1)) { // Next digit in the current range
+                $currentMax = $int;
+                continue;
+            }
+
+            // We've reached the end of the current range
+            $ranges[] = [
+                'min' => $currentMin,
+                'max' => $currentMax,
+            ];
+
+            $currentMin = $int;
+            $currentMax = $int;
+
+        }
+
+        if ($currentMin !== NULL) {
+
+            $ranges[] = [
+                'min' => $currentMin,
+                'max' => $currentMax,
+            ];
+
+        }
+
+        return $ranges;
+    }
+
+    /**
      * @param string $comment
      * @param int    $indentationLevel
      *
