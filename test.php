@@ -16,8 +16,8 @@ $message1->addField(new PHPProtoGen\Field(
     PHPProtoGen\Field::OPTION_DEPRECATED
 ));
 $message1->addField(new PHPProtoGen\Field(
-   'newField',
-   PHPProtoGen\FieldType::Int()
+    'newField',
+    PHPProtoGen\FieldType::Int()
 ));
 
 $file1->addMessage($message1);
