@@ -37,7 +37,8 @@ class Utility {
 
     const MESSAGE_ANY = 'google.protobuf.Any',
           MESSAGE_STRUCT = 'google.protobuf.Struct',
-          MESSAGE_VALUE = 'google.protobuf.Value';
+          MESSAGE_VALUE = 'google.protobuf.Value',
+          MESSAGE_TIMESTAMP = 'google.protobuf.Timestamp';
 
     /**
      * @param string $type

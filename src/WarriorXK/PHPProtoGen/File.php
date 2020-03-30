@@ -225,16 +225,20 @@ class File {
             $messageFields = $message->getFields();
             foreach ($messageFields as $messageField) {
 
-                $typeSourcePath = $messageField->getType()->getSourceFilePath();
-                if ($typeSourcePath === $this->getPath()) {
-                    // Don't include ourself
-                    continue;
+                $type = $messageField->getType();
+                $typeSourcePath = $type->getSourceFilePath();
+
+                if ($type->getType() === 'map') {
+                    $typeSourcePath = $typeValueType = $type->getValueType()->getSourceFilePath();
                 }
 
-                $imports = $this->getImports();
+                if ($typeSourcePath !== NULL && $typeSourcePath !== $this->getPath()) {
 
-                if ($typeSourcePath !== NULL && !isset($imports[$typeSourcePath])) {
-                    $this->addImport(new Import($typeSourcePath));
+                    $imports = $this->getImports();
+                    if (!isset($imports[$typeSourcePath])) {
+                        $this->addImport(new Import($typeSourcePath));
+                    }
+
                 }
 
             }

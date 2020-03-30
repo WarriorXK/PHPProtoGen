@@ -60,6 +60,14 @@ class FieldType {
         return $type;
     }
 
+    public static function Timestamp(bool $repeatable = FALSE) {
+
+        $type = new static(Utility::MESSAGE_TIMESTAMP, $repeatable);
+        $type->_sourceFilePath = 'google/protobuf/timestamp.proto';
+
+        return $type;
+    }
+
     public static function Int(bool $repeatable = FALSE) {
         return new static(Utility::TYPE_INT64, $repeatable);
     }
