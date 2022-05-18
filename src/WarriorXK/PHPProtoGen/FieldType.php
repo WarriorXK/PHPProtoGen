@@ -38,6 +38,11 @@ class FieldType {
     protected $_valueType = NULL;
 
     /**
+     * @var bool
+     */
+    protected $_optional = FALSE;
+
+    /**
      * @var \WarriorXK\PHPProtoGen\FieldType|null
      */
     protected $_keyType = NULL;
@@ -52,86 +57,87 @@ class FieldType {
      */
     protected $_type = NULL;
 
-    public static function Any(bool $repeatable = FALSE) {
+    public static function Any(bool $repeatable = FALSE, bool $optional = FALSE) {
 
-        $type = new static(Utility::MESSAGE_ANY, $repeatable);
+        $type = new static(Utility::MESSAGE_ANY, $repeatable, $optional);
         $type->_sourceFilePath = 'google/protobuf/any.proto';
 
         return $type;
     }
 
-    public static function Timestamp(bool $repeatable = FALSE) {
+    public static function Timestamp(bool $repeatable = FALSE, bool $optional = FALSE) {
 
-        $type = new static(Utility::MESSAGE_TIMESTAMP, $repeatable);
+        $type = new static(Utility::MESSAGE_TIMESTAMP, $repeatable, $optional);
         $type->_sourceFilePath = 'google/protobuf/timestamp.proto';
 
         return $type;
     }
 
-    public static function Int(bool $repeatable = FALSE) {
-        return new static(Utility::TYPE_INT64, $repeatable);
+    public static function Int(bool $repeatable = FALSE, bool $optional = FALSE) {
+        return new static(Utility::TYPE_INT64, $repeatable, $optional);
     }
 
-    public static function SInt(bool $repeatable = FALSE) {
-        return new static(Utility::TYPE_SINT64, $repeatable);
+    public static function SInt(bool $repeatable = FALSE, bool $optional = FALSE) {
+        return new static(Utility::TYPE_SINT64, $repeatable, $optional);
     }
 
-    public static function UInt(bool $repeatable = FALSE) {
-        return new static(Utility::TYPE_UINT64, $repeatable);
+    public static function UInt(bool $repeatable = FALSE, bool $optional = FALSE) {
+        return new static(Utility::TYPE_UINT64, $repeatable, $optional);
     }
 
-    public static function Float(bool $repeatable = FALSE) {
-        return new static(Utility::TYPE_FLOAT, $repeatable);
+    public static function Float(bool $repeatable = FALSE, bool $optional = FALSE) {
+        return new static(Utility::TYPE_FLOAT, $repeatable, $optional);
     }
 
-    public static function Double(bool $repeatable = FALSE) {
-        return new static(Utility::TYPE_DOUBLE, $repeatable);
+    public static function Double(bool $repeatable = FALSE, bool $optional = FALSE) {
+        return new static(Utility::TYPE_DOUBLE, $repeatable, $optional);
     }
 
-    public static function String(bool $repeatable = FALSE) {
-        return new static(Utility::TYPE_STRING, $repeatable);
+    public static function String(bool $repeatable = FALSE, bool $optional = FALSE) {
+        return new static(Utility::TYPE_STRING, $repeatable, $optional);
     }
 
-    public static function Bool(bool $repeatable = FALSE) {
-        return new static(Utility::TYPE_BOOL, $repeatable);
+    public static function Bool(bool $repeatable = FALSE, bool $optional = FALSE) {
+        return new static(Utility::TYPE_BOOL, $repeatable, $optional);
     }
 
-    public static function Bytes(bool $repeatable = FALSE) {
-        return new static(Utility::TYPE_BYTES, $repeatable);
+    public static function Bytes(bool $repeatable = FALSE, bool $optional = FALSE) {
+        return new static(Utility::TYPE_BYTES, $repeatable, $optional);
     }
 
-    public static function Enum(Enum $enum, $repeatable = FALSE) {
-        return new static($enum->getFQMN(), $repeatable);
+    public static function Enum(Enum $enum, $repeatable = FALSE, bool $optional = FALSE) {
+        return new static($enum->getFQMN(), $repeatable, $optional);
     }
 
     public static function Map(self $keyType, self $valueType) {
 
-        $map = new static(Utility::TYPE_MAP, FALSE);
+        $map = new static(Utility::TYPE_MAP, FALSE, FALSE);
         $map->setValueType($valueType);
         $map->setKeyType($keyType);
 
         return $map;
     }
 
-    public static function Struct(bool $repeatable = FALSE) {
-        return new static(Utility::MESSAGE_STRUCT, $repeatable);
+    public static function Struct(bool $repeatable = FALSE, bool $optional = FALSE) {
+        return new static(Utility::MESSAGE_STRUCT, $repeatable, $optional);
     }
 
-    public static function Value(bool $repeatable = FALSE) {
-        return new static(Utility::MESSAGE_VALUE, $repeatable);
+    public static function Value(bool $repeatable = FALSE, bool $optional = FALSE) {
+        return new static(Utility::MESSAGE_VALUE, $repeatable, $optional);
     }
 
-    public static function Message(Message $message, $repeatable = FALSE) {
+    public static function Message(Message $message, bool $repeatable = FALSE, bool $optional = FALSE) {
 
-        $type = new static($message->getFQMN(), $repeatable);
+        $type = new static($message->getFQMN(), $repeatable, $optional);
         $type->_sourceFilePath = $message->getFile()->getPath();
 
         return $type;
     }
 
-    public function __construct(string $type, bool $repeatable = FALSE) {
+    public function __construct(string $type, bool $repeatable = FALSE, bool $optional = FALSE) {
 
         $this->setRepeatable($repeatable);
+        $this->setOptional($optional);
         $this->setType($type);
 
     }
@@ -152,6 +158,19 @@ class FieldType {
 
     public function getValueType() {
         return $this->_valueType;
+    }
+
+    public function setOptional(bool $optional) {
+
+        if ($this->isRepeatable() && $optional) {
+            throw new \RuntimeException('FieldType cannot be optional and repeatable at the same time');
+        }
+
+        $this->_optional = $optional;
+    }
+
+    public function isOptional() : bool {
+        return $this->_optional;
     }
 
     public function setKeyType(self $type) {
@@ -182,7 +201,13 @@ class FieldType {
     }
 
     public function setRepeatable(bool $repeatable) {
+
+        if ($repeatable && $this->isOptional()) {
+            throw new \RuntimeException('FieldType cannot be optional and repeatable at the same time');
+        }
+
         $this->_repeatable = $repeatable;
+
     }
 
     public function isRepeatable() : bool {
@@ -215,6 +240,13 @@ class FieldType {
             return $strType . '<' . $keyType->getType() . ', ' . $valueType->getType() . '>';
         }
 
-        return ($this->isRepeatable() ? 'repeated ' : '') . $strType;
+        $prefix = '';
+        if ($this->isOptional()) {
+            $prefix = 'optional ';
+        } elseif ($this->isRepeatable()) {
+            $prefix = 'repeated ';
+        }
+
+        return $prefix . $strType;
     }
 }
