@@ -2,13 +2,6 @@
 
 declare(strict_types = 1);
 
-/**
- * Created by PhpStorm.
- * User: kevinmeijer
- * Date: 07/06/2018
- * Time: 10:12
- */
-
 namespace WarriorXK\PHPProtoGen;
 
 class Enum {
